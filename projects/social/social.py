@@ -1,3 +1,5 @@
+from random import shuffle
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -32,10 +34,8 @@ class SocialGraph:
         """
         Takes a number of users and an average number of friendships
         as arguments
-
         Creates that number of users and a randomly distributed friendships
         between those users.
-
         The number of users must be greater than the average number of friendships.
         """
         # Reset graph
@@ -45,22 +45,49 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
-
-        # Create friendships
+        for i in range(num_users):
+            self.add_user(f"User {i}")
+        possible_friendships = []
+        for user_id in self.users:
+            for friend_id in range(user_id + 1, self.last_id + 1):
+                possible_friendships.append((user_id, friend_id))
+        shuffle(possible_friendships)
+        for i in range(num_users * avg_friendships // 2):
+            friendship = possible_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
 
     def get_all_social_paths(self, user_id):
         """
         Takes a user's user_id as an argument
-
         Returns a dictionary containing every user in that user's
         extended network with the shortest friendship path between them.
-
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        # { 2: [2,4,5] }
+
+        # Grab Friends
+        for friends in self.friendships[user_id]:
+            if friends not in visited:
+                visited[friends] = self.dfs(friends, user_id)
         return visited
 
+    def dfs(self, start, target, path=None, visited=None):
+        if visited is None:
+            visited = set()
+        if path is None:
+            path = []
+        path = path + [start]
+        if start == target:
+            return path
+        if start not in visited:
+            visited.add(start)
+            for friend in self.friendships[start]:
+                new_path = self.dfs(friend, target, path, visited)
+                if new_path:
+                    return new_path
+        return None
 
 if __name__ == '__main__':
     sg = SocialGraph()

@@ -1,5 +1,9 @@
+# import os 
+# os.system('py adv.py')
+
+
 class Player:
-    def __init__(self, starting_room):
+    def __init__(self, starting_room = 487):
         self.current_room = starting_room
     def travel(self, direction, show_rooms = False):
         next_room = self.current_room.get_room_in_direction(direction)
@@ -9,3 +13,7 @@ class Player:
                 next_room.print_room_description(self)
         else:
             print("You cannot move in that direction.")
+
+
+
+
